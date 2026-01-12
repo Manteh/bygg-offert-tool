@@ -52,11 +52,11 @@ export function InputRow({ item }: InputRowProps) {
     const laborCost = calculateRowLabor(item, config);
 
     return (
-        <div className="group relative grid grid-cols-12 gap-4 items-start p-4 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200">
+        <div className="group relative grid grid-cols-12 gap-4 items-start p-4 rounded-xl bg-gray-900 border border-gray-800 shadow-sm hover:shadow-md hover:border-gray-700 transition-all duration-200">
             {/* Delete Button - Absolute Positioned */}
             <button
                 onClick={() => removeItem(item.id)}
-                className="absolute -right-2 -top-2 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full p-1 shadow-sm border border-gray-100 opacity-0 group-hover:opacity-100 transition-all z-10 cursor-pointer"
+                className="absolute -right-2 -top-2 bg-gray-800 text-gray-400 hover:text-red-400 hover:bg-gray-700 rounded-full p-1 shadow-sm border border-gray-700 opacity-0 group-hover:opacity-100 transition-all z-10 cursor-pointer"
                 title={t.deleteItem}
             >
                 <Trash2 className="h-4 w-4" />
@@ -69,7 +69,7 @@ export function InputRow({ item }: InputRowProps) {
                         placeholder={t.descLt}
                         value={item.descriptionLithuanian}
                         onChange={(e) => updateItem(item.id, { descriptionLithuanian: e.target.value })}
-                        className="min-h-[40px] focus:ring-1 focus:ring-primary/20"
+                        className="min-h-[40px] bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700 focus:ring-1 focus:ring-primary/20"
                     />
                 </div>
                 <div className="space-y-1">
@@ -80,7 +80,7 @@ export function InputRow({ item }: InputRowProps) {
                                 placeholder={t.descSv}
                                 value={item.descriptionSwedish}
                                 onChange={(e) => updateItem(item.id, { descriptionSwedish: e.target.value })}
-                                className="min-h-[40px] bg-gray-50/50 focus:ring-1 focus:ring-primary/20"
+                                className="min-h-[40px] bg-gray-950/50 border-gray-800 text-gray-100 placeholder:text-gray-700 focus:ring-1 focus:ring-primary/20"
                             />
                         </div>
                         <Button
@@ -89,7 +89,7 @@ export function InputRow({ item }: InputRowProps) {
                             onClick={handleTranslate}
                             disabled={isTranslating || !item.descriptionLithuanian}
                             title={t.translate}
-                            className="shrink-0"
+                            className="shrink-0 border-gray-800 bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white"
                         >
                             {isTranslating ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -113,9 +113,9 @@ export function InputRow({ item }: InputRowProps) {
                                 placeholder="0"
                                 value={item.hours ?? ''}
                                 onChange={(e) => updateItem(item.id, { hours: e.target.value === '' ? null : Number(e.target.value) })}
-                                className="font-mono text-right"
+                                className="font-mono text-right bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
                             />
-                            <div className="text-[10px] text-gray-400 text-right mt-1">
+                            <div className="text-[10px] text-gray-500 text-right mt-1">
                                 {formatPrice(laborCost)} kr
                             </div>
                         </div>
@@ -126,9 +126,9 @@ export function InputRow({ item }: InputRowProps) {
                                 placeholder="0"
                                 value={item.fixedLaborCost ?? ''}
                                 onChange={(e) => updateItem(item.id, { fixedLaborCost: e.target.value === '' ? null : Number(e.target.value) })}
-                                className="font-mono text-right"
+                                className="font-mono text-right bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
                             />
-                            <div className="text-[10px] text-gray-400 text-right mt-1">
+                            <div className="text-[10px] text-gray-500 text-right mt-1">
                                 Fastpris
                             </div>
                         </div>
@@ -145,9 +145,9 @@ export function InputRow({ item }: InputRowProps) {
                             placeholder="0"
                             value={item.materialCost ?? ''}
                             onChange={(e) => updateItem(item.id, { materialCost: e.target.value === '' ? null : Number(e.target.value) })}
-                            className="font-mono text-right pr-12"
+                            className="font-mono text-right pr-12 bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
                         />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">kr</span>
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">kr</span>
                     </div>
                 </div>
             </div>

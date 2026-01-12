@@ -79,7 +79,7 @@ export function DocumentView() {
                 {/* Printable Content */}
                 <div
                     ref={componentRef}
-                    className="print-container bg-white p-[15mm] shadow-2xl min-h-[297mm] w-[210mm] mx-auto text-sm leading-relaxed flex flex-col"
+                    className="print-container bg-white text-gray-900 p-[15mm] shadow-2xl min-h-[297mm] w-[210mm] mx-auto text-sm leading-relaxed flex flex-col"
                 >
                     <div className="print-content flex-1">
                         {/* Header */}

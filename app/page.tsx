@@ -1,86 +1,137 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useOfferStore } from "@/store/offer-store";
 import { ConfigPanel } from "@/components/offer-builder/config-panel";
+import { HistorySidebar } from "@/components/history-sidebar";
 import { InputRow } from "@/components/offer-builder/input-row";
 import { DocumentView } from "@/components/offer-preview/document-view";
+import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, PanelLeftOpen } from "lucide-react";
 import { translations } from "@/lib/i18n";
 
 export default function Home() {
-    const { items, addItem, language, setLanguage } = useOfferStore();
+    const { items, addItem, config, saveCurrentOffer, language, setLanguage, selectedOfferId } = useOfferStore();
     const t = translations[language];
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+    // Auto-save logic
+    useEffect(() => {
+        if (!selectedOfferId) return;
+
+        const timeout = setTimeout(() => {
+            saveCurrentOffer();
+        }, 1000);
+
+        return () => clearTimeout(timeout);
+    }, [items, config, saveCurrentOffer, selectedOfferId]); // Dependency on data that needs saving
+
+
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
-            {/* Header */}
-            <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
-                <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 p-2 rounded-lg">
-                            {/* Simple Icon Placeholder */}
-                            <div className="w-6 h-6 bg-primary rounded-sm" />
+        <div className="h-screen bg-gray-950 flex font-sans text-gray-100 overflow-hidden">
+            {/* Sidebar (Fully controlled) */}
+            <HistorySidebar
+                isOpen={isSidebarOpen}
+                onToggle={() => setIsSidebarOpen(false)}
+            />
+
+            {/* Main Layout (Flex Column) */}
+            <div className="flex-1 flex flex-col min-w-0 h-full">
+
+                {/* Header */}
+                <header className="bg-gray-900 border-b border-gray-800 flex-shrink-0 z-10 shadow-sm relative">
+                    {/* Toggle Button - Absolute Left */}
+                    {!isSidebarOpen && (
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setIsSidebarOpen(true)}
+                                className="text-gray-400 hover:text-white hover:bg-gray-800"
+                                title="Open Sidebar"
+                            >
+                                <PanelLeftOpen className="w-6 h-6" />
+                            </Button>
                         </div>
-                        <h1 className="text-xl font-bold tracking-tight text-gray-900">{t.appTitle}</h1>
+                    )}
+
+                    <div className="max-w-[1920px] mx-auto px-6 h-16 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            {/* Logo Removed as requested */}
+                            <h1 className="text-xl font-bold tracking-tight text-white ml-8 md:ml-0">{t.appTitle}</h1>
+                        </div>
+                        <div className="flex gap-2">
+                            <Button
+                                variant={language === 'sv' ? 'default' : 'ghost'}
+                                size="icon"
+                                onClick={() => setLanguage('sv')}
+                                className={`rounded-full ${language !== 'sv' ? 'bg-transparent hover:bg-gray-800' : 'bg-gray-800 hover:bg-gray-700'} border border-gray-700`}
+                                title="Svenska"
+                            >
+                                <span className="text-xl">🇸🇪</span>
+                            </Button>
+                            <Button
+                                variant={language === 'lt' ? 'default' : 'ghost'}
+                                size="icon"
+                                onClick={() => setLanguage('lt')}
+                                className={`rounded-full ${language !== 'lt' ? 'bg-transparent hover:bg-gray-800' : 'bg-gray-800 hover:bg-gray-700'} border border-gray-700`}
+                                title="Lietuvių"
+                            >
+                                <span className="text-xl">🇱🇹</span>
+                            </Button>
+                        </div>
                     </div>
-                    <div className="flex gap-2">
-                        <Button
-                            variant={language === 'sv' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setLanguage('sv')}
-                            className="font-medium"
-                        >
-                            🇸🇪 Svenska
-                        </Button>
-                        <Button
-                            variant={language === 'lt' ? 'default' : 'ghost'}
-                            size="sm"
-                            onClick={() => setLanguage('lt')}
-                            className="font-medium"
-                        >
-                            🇱🇹 Lietuvių
-                        </Button>
-                    </div>
-                </div>
-            </header>
+                </header>
 
-            {/* Main Content */}
-            <main className="flex-1 max-w-[1600px] mx-auto w-full p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-7rem)]">
+                {/* Content Area */}
+                <main className="flex-1 overflow-hidden">
+                    {!selectedOfferId ? (
+                        <EmptyState />
+                    ) : (
+                        <div className="h-full flex flex-col lg:flex-row">
 
-                    {/* Left Panel: Builder (Scrollable) */}
-                    <div className="lg:col-span-5 flex flex-col gap-6 overflow-y-auto pr-2 pb-10 no-scrollbar">
-                        <ConfigPanel />
+                            {/* Builder Panel (Scrollable) */}
+                            <div className="flex-1 max-w-3xl border-r border-gray-800 bg-gray-950 flex flex-col h-full overflow-hidden">
+                                <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+                                    <div className="space-y-6 pb-20">
+                                        <ConfigPanel />
 
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-lg font-semibold text-gray-800">{t.offerItems}</h2>
-                                <Button onClick={addItem} size="sm" className="shadow-sm">
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    {t.addItem}
-                                </Button>
-                            </div>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <h2 className="text-lg font-semibold text-gray-200">{t.offerItems}</h2>
+                                                <Button onClick={addItem} size="sm" className="shadow-sm">
+                                                    <Plus className="mr-2 h-4 w-4" />
+                                                    {t.addItem}
+                                                </Button>
+                                            </div>
 
-                            <div className="space-y-3">
-                                {items.map((item) => (
-                                    <InputRow key={item.id} item={item} />
-                                ))}
-                                {items.length === 0 && (
-                                    <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
-                                        <p>{t.noItems}</p>
+                                            <div className="space-y-3">
+                                                {items.map((item) => (
+                                                    <InputRow key={item.id} item={item} />
+                                                ))}
+                                                {items.length === 0 && (
+                                                    <div className="text-center py-12 text-gray-500 border-2 border-dashed border-gray-800 rounded-xl bg-gray-900/50">
+                                                        <p>{t.noItems}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
+                                </div>
+                            </div>
+
+                            {/* Preview Panel */}
+                            <div className="flex-1 bg-gray-900 h-full overflow-y-auto p-8 flex justify-center items-start">
+                                <div className="sticky top-8 w-full max-w-[210mm]">
+                                    <DocumentView />
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    {/* Right Panel: Preview (Sticky/Fixed) */}
-                    <div className="lg:col-span-7 bg-gray-100/50 rounded-2xl border border-gray-200 p-8 overflow-y-auto flex justify-center items-start shadow-inner">
-                        <DocumentView />
-                    </div>
-                </div>
-            </main>
+                    )}
+                </main>
+            </div>
         </div>
     );
 }
