@@ -21,7 +21,9 @@ export function calculateTotals(items: OfferItem[], config: OfferConfig) {
 
     let rotDeduction = 0;
     if (config.useRot) {
-        rotDeduction = totalLabor * 0.30; // 30% ROT deduction on labor
+        const vatRate = config.vatRate || 0;
+        const laborWithVat = totalLabor * (1 + vatRate);
+        rotDeduction = laborWithVat * 0.30; // 30% ROT deduction on labor (incl. VAT)
     }
 
     const totalToPay = totalWithVat - rotDeduction;
