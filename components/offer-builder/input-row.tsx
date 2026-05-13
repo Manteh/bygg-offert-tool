@@ -101,44 +101,46 @@ export function InputRow({ item }: InputRowProps) {
                 </div>
             </div>
 
-            <div className="col-span-12 md:col-span-3 space-y-3">
-                <div className="space-y-1">
-                    <div className="text-xs font-medium text-gray-500">
-                        {config.pricingMode === 'hourly' ? t.hours : 'Pris'}
+            {config.pricingMode !== 'materials' && (
+                <div className="col-span-12 md:col-span-3 space-y-3">
+                    <div className="space-y-1">
+                        <div className="text-xs font-medium text-gray-500">
+                            {config.pricingMode === 'hourly' ? t.hours : 'Pris'}
+                        </div>
+                        {config.pricingMode === 'hourly' ? (
+                            <div className="relative">
+                                <Input
+                                    type="number"
+                                    placeholder="0"
+                                    value={item.hours ?? ''}
+                                    onChange={(e) => updateItem(item.id, { hours: e.target.value === '' ? null : Number(e.target.value) })}
+                                    className="font-mono text-right bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
+                                />
+                                <div className="text-[10px] text-gray-500 text-right mt-1">
+                                    {formatPrice(laborCost)} kr
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="relative">
+                                <Input
+                                    type="number"
+                                    placeholder="0"
+                                    value={item.fixedLaborCost ?? ''}
+                                    onChange={(e) => updateItem(item.id, { fixedLaborCost: e.target.value === '' ? null : Number(e.target.value) })}
+                                    className="font-mono text-right bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
+                                />
+                                <div className="text-[10px] text-gray-500 text-right mt-1">
+                                    Fastpris
+                                </div>
+                            </div>
+                        )}
                     </div>
-                    {config.pricingMode === 'hourly' ? (
-                        <div className="relative">
-                            <Input
-                                type="number"
-                                placeholder="0"
-                                value={item.hours ?? ''}
-                                onChange={(e) => updateItem(item.id, { hours: e.target.value === '' ? null : Number(e.target.value) })}
-                                className="font-mono text-right bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
-                            />
-                            <div className="text-[10px] text-gray-500 text-right mt-1">
-                                {formatPrice(laborCost)} kr
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="relative">
-                            <Input
-                                type="number"
-                                placeholder="0"
-                                value={item.fixedLaborCost ?? ''}
-                                onChange={(e) => updateItem(item.id, { fixedLaborCost: e.target.value === '' ? null : Number(e.target.value) })}
-                                className="font-mono text-right bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-700"
-                            />
-                            <div className="text-[10px] text-gray-500 text-right mt-1">
-                                Fastpris
-                            </div>
-                        </div>
-                    )}
                 </div>
-            </div>
+            )}
 
-            <div className="col-span-12 md:col-span-4 space-y-3">
+            <div className={`col-span-12 ${config.pricingMode === 'materials' ? 'md:col-span-7' : 'md:col-span-4'} space-y-3`}>
                 <div className="space-y-1">
-                    <div className="text-xs font-medium text-gray-500">{t.material}</div>
+                    <div className="text-xs font-medium text-gray-500">{config.pricingMode === 'materials' ? 'Kostnad' : t.material}</div>
                     <div className="relative">
                         <Input
                             type="number"

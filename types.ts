@@ -8,7 +8,7 @@ export interface OfferItem {
 }
 
 export interface OfferConfig {
-    pricingMode: 'hourly' | 'fixed';
+    pricingMode: 'hourly' | 'fixed' | 'materials';
     hourlyRate: number | null;
     vatRate: number | null;
     companyName: string;

@@ -114,9 +114,13 @@ export function DocumentView() {
                                     {config.pricingMode === 'hourly' && (
                                         <th className="text-right py-2 font-bold w-24">Timmar</th>
                                     )}
-                                    <th className="text-right py-2 font-bold w-32">Arbetskostnad</th>
-                                    <th className="text-right py-2 font-bold w-32">Material</th>
-                                    <th className="text-right py-2 font-bold w-32">Totalt</th>
+                                    {config.pricingMode !== 'materials' && (
+                                        <th className="text-right py-2 font-bold w-32">Arbetskostnad</th>
+                                    )}
+                                    <th className="text-right py-2 font-bold w-32">{config.pricingMode === 'materials' ? 'Kostnad' : 'Material'}</th>
+                                    {config.pricingMode !== 'materials' && (
+                                        <th className="text-right py-2 font-bold w-32">Totalt</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -129,23 +133,35 @@ export function DocumentView() {
                                             {config.pricingMode === 'hourly' && (
                                                 <td className="text-right py-2">{item.hours}</td>
                                             )}
-                                            <td className="text-right py-2">{formatPrice(labor)} kr</td>
+                                            {config.pricingMode !== 'materials' && (
+                                                <td className="text-right py-2">{formatPrice(labor)} kr</td>
+                                            )}
                                             <td className="text-right py-2">{formatPrice(item.materialCost || 0)} kr</td>
-                                            <td className="text-right py-2">{formatPrice(total)} kr</td>
+                                            {config.pricingMode !== 'materials' && (
+                                                <td className="text-right py-2">{formatPrice(total)} kr</td>
+                                            )}
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
 
+                        {config.pricingMode === 'materials' && (
+                            <p className="text-xs text-gray-500 italic mb-6">
+                                OBS: Detta är en preliminär materialkostnad. Arbetskostnad tillkommer och offereras separat.
+                            </p>
+                        )}
+
                         {/* Totals */}
                         <div className="flex flex-col items-end space-y-2 mt-8 border-t pt-4">
+                            {config.pricingMode !== 'materials' && (
+                                <div className="w-80 flex justify-between">
+                                    <span>Arbetskostnad:</span>
+                                    <span>{formatPrice(totals.totalLabor)} kr</span>
+                                </div>
+                            )}
                             <div className="w-80 flex justify-between">
-                                <span>Arbetskostnad:</span>
-                                <span>{formatPrice(totals.totalLabor)} kr</span>
-                            </div>
-                            <div className="w-80 flex justify-between">
-                                <span>Materialkostnad:</span>
+                                <span>{config.pricingMode === 'materials' ? 'Materialkostnad:' : 'Materialkostnad:'}</span>
                                 <span>{formatPrice(totals.totalMaterial)} kr</span>
                             </div>
                             <div className="w-80 flex justify-between font-bold border-t pt-2">
@@ -161,7 +177,7 @@ export function DocumentView() {
                                 <span>{formatPrice(totals.totalWithVat)} kr</span>
                             </div>
 
-                            {config.useRot && (
+                            {config.useRot && config.pricingMode !== 'materials' && (
                                 <div className="w-80 mt-4 pt-2 border-t border-dashed border-gray-300">
                                     <div className="flex justify-between text-green-600">
                                         <span>ROT-avdrag (30%):</span>

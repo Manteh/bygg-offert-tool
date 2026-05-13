@@ -35,23 +35,34 @@ export function ConfigPanel() {
                         >
                             {t.fixedMode}
                         </button>
+                        <button
+                            onClick={() => setConfig({ pricingMode: 'materials' })}
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer ${config.pricingMode === 'materials'
+                                ? 'bg-gray-800 text-white shadow-sm ring-1 ring-gray-700'
+                                : 'text-gray-400 hover:text-gray-200'
+                                }`}
+                        >
+                            {t.materialsMode}
+                        </button>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label className="text-gray-300">{t.hourlyRate}</Label>
-                        <div className="relative">
-                            <Input
-                                type="number"
-                                value={config.hourlyRate ?? ''}
-                                onChange={(e) => setConfig({ hourlyRate: e.target.value === '' ? null : Number(e.target.value) })}
-                                disabled={config.pricingMode === 'fixed'}
-                                className={`pr-16 bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-600 focus-visible:ring-gray-700 ${config.pricingMode === 'fixed' ? 'opacity-50' : ''}`}
-                            />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">SEK/h</span>
+                <div className={`grid gap-6 ${config.pricingMode === 'materials' ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                    {config.pricingMode !== 'materials' && (
+                        <div className="space-y-2">
+                            <Label className="text-gray-300">{t.hourlyRate}</Label>
+                            <div className="relative">
+                                <Input
+                                    type="number"
+                                    value={config.hourlyRate ?? ''}
+                                    onChange={(e) => setConfig({ hourlyRate: e.target.value === '' ? null : Number(e.target.value) })}
+                                    disabled={config.pricingMode === 'fixed'}
+                                    className={`pr-16 bg-gray-950 border-gray-800 text-gray-100 placeholder:text-gray-600 focus-visible:ring-gray-700 ${config.pricingMode === 'fixed' ? 'opacity-50' : ''}`}
+                                />
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">SEK/h</span>
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div className="space-y-2">
                         <Label className="text-gray-300">{t.vatRate}</Label>
                         <div className="relative">
@@ -123,7 +134,7 @@ export function ConfigPanel() {
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-3 pt-4 border-t border-gray-800">
+                {config.pricingMode !== 'materials' && <div className="flex items-center space-x-3 pt-4 border-t border-gray-800">
                     <Checkbox
                         id="rot"
                         checked={config.useRot}
@@ -131,7 +142,7 @@ export function ConfigPanel() {
                         className="h-5 w-5 border-gray-600 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                     <Label htmlFor="rot" className="font-medium cursor-pointer text-gray-300 hover:text-white transition-colors">{t.enableRot}</Label>
-                </div>
+                </div>}
             </CardContent>
         </Card>
     );

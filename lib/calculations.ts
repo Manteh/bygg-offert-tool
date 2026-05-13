@@ -1,9 +1,8 @@
 import { OfferItem, OfferConfig } from "@/types";
 
 export function calculateRowLabor(item: OfferItem, config: OfferConfig): number {
-    if (config.pricingMode === 'fixed') {
-        return item.fixedLaborCost || 0;
-    }
+    if (config.pricingMode === 'materials') return 0;
+    if (config.pricingMode === 'fixed') return item.fixedLaborCost || 0;
     return (item.hours || 0) * (config.hourlyRate || 0);
 }
 
